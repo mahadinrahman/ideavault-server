@@ -29,6 +29,7 @@ async function run() {
     
    const db=client.db("ideavault");
    const ideaCollection=db.collection("ideas");
+   const commentCollection=db.collection("comments");
 
 
   app.post('/idea',async(req,res)=>{
@@ -50,6 +51,35 @@ async function run() {
     res.json(result)
   })
 
+   app.post('/comment',async(req,res)=>{
+      const commentData={...req.body,
+      createdAt: new Date(),
+    };
+
+      // console.log(commentData);
+      const result =await commentCollection.insertOne(commentData);
+
+      res.json(result);
+    })
+
+     app.get('/comment/:id',async(req,res)=>{
+      const {id} =req.params;
+      const result =await commentCollection.find({
+      ideaId: id
+   }).toArray();
+    
+      res.json(result);
+    })
+
+    app.get('/my-comments/:email', async(req,res)=>{
+   const { email } = req.params;
+
+   const result = await commentCollection.find({
+      userEmail: email
+   }).toArray();
+
+   res.send(result);
+})
 
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
