@@ -80,6 +80,87 @@ async function run() {
 
    res.send(result);
 })
+    app.get('/my-ideas/:email', async(req,res)=>{
+   const { email } = req.params;
+
+   const result = await ideaCollection.find({
+      userEmail: email
+   }).toArray();
+
+   res.send(result);
+})
+  
+app.delete('/comment/:id', async (req, res) => {
+
+  const { id } = req.params;
+  const { userEmail } = req.body;
+
+  const result = await commentCollection.deleteOne({
+    _id: new ObjectId(id),
+    userEmail: userEmail
+  });
+
+  res.send(result);
+});
+
+
+app.patch('/comment/:id', async (req, res) => {
+
+  const { id } = req.params;
+  const { comment, userEmail } = req.body;
+
+  const result = await commentCollection.updateOne(
+    {
+      _id: new ObjectId(id),
+      userEmail: userEmail
+    },
+    {
+      $set: { comment }
+    }
+  );
+
+  res.send(result);
+});
+
+app.delete('/my-ideas/:id', async (req, res) => {
+
+  const { id } = req.params;
+  const result = await ideaCollection.deleteOne({
+    _id: new ObjectId(id),
+  });
+
+  res.send(result);
+});
+
+app.patch('/my-ideas/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    
+    const updateData = req.body;
+
+    if (!updateData || Object.keys(updateData).length === 0) {
+      return res.status(400).send({
+        success: false,
+        message: "No update data received",
+      });
+    }
+
+    const result = await ideaCollection.updateOne(
+      { _id: new ObjectId(id) },
+      {
+        $set: updateData,
+      }
+    );
+
+    res.send(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Server error" });
+  }
+});
+
+
 
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
