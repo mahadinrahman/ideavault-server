@@ -44,6 +44,11 @@ async function run() {
     res.json(result);
   })
 
+  app.get("/feature",async(req,res)=>{
+    const result = await ideaCollection.find().limit(6).toArray();
+    res.json(result);
+  })
+
   app.get("/idea/:id",async(req,res)=>{
     const {id} =req.params ;
     const result =await ideaCollection.findOne({_id:new ObjectId(id)})
