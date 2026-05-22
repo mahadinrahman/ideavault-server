@@ -59,7 +59,7 @@ async function run() {
    const commentCollection=db.collection("comments");
 
 
-  app.post('/idea',async(req,res)=>{
+  app.post('/idea',verifyToken,async(req,res)=>{
     const ideaData=req.body;
     const result=await ideaCollection.insertOne(ideaData);
 
@@ -112,7 +112,7 @@ async function run() {
 
    res.send(result);
 })
-    app.get('/my-ideas/:email', async(req,res)=>{
+    app.get('/my-ideas/:email',verifyToken, async(req,res)=>{
    const { email } = req.params;
 
    const result = await ideaCollection.find({
