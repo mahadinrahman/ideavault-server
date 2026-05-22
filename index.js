@@ -103,7 +103,7 @@ async function run() {
       res.json(result);
     })
 
-    app.get('/my-comments/:email', async(req,res)=>{
+    app.get('/my-comments/:email',verifyToken, async(req,res)=>{
    const { email } = req.params;
 
    const result = await commentCollection.find({
